@@ -14,8 +14,9 @@
 
 ![Open World 3D — downtown street](docs/screenshots/street.jpg)
 
-**▶ Play it now:** download [`index1.html`](index1.html) and open it in a browser. That's it — that
-single file *is* the whole game (~16 MB).
+**▶ Play it now:** download [`index1.html`](index1.html) and open it in a browser. That's it —
+that single file *is* the whole game (~16 MB). Have the repo already? **Double-click `play.bat`
+(Windows)** or run **`./play.sh`** (macOS / Linux) — see [Playing locally](#playing-locally).
 
 ---
 
@@ -44,6 +45,7 @@ changes so we can agree on a direction first.
 * [Features](#features)
 * [Screenshots](#screenshots)
 * [Playing locally](#playing-locally)
+* [System requirements](#system-requirements)
 * [Controls](#controls)
 * [Cheat codes](#cheat-codes)
 * [Save system](#save-system)
@@ -112,8 +114,18 @@ third-party art — see [CREDITS.md](CREDITS.md).)*
 
 ## Playing locally
 
-> **tl;dr** — open `index1.html` in a desktop browser (Chrome / Edge / Firefox). Click the page
-> once to capture the mouse. That's the whole setup.
+> **Windows — the easy way:** double-click **`play.bat`**. The launcher checks what you have,
+> starts a tiny local server (Node.js → Python → opens the file directly as a last resort) and
+> launches the game in your default browser. Keep the small console window open while you play —
+> closing it stops the server. Nothing is installed or downloaded automatically, and if
+> `index1.html` is missing the launcher rebuilds it (when Node.js is available). The whole
+> launcher is under 100 readable lines — open it in Notepad if you want to see exactly what it does.
+
+> **macOS / Linux:** run **`./play.sh`** for the same behaviour, or use one of the manual
+> options below.
+
+> **tl;dr** — or just open `index1.html` in a desktop browser (Chrome / Edge / Firefox) and
+> click the page once to capture the mouse.
 
 The single file works straight from the disk, but a local server is recommended (some browsers are
 friendlier to pointer-lock and audio from `http://` origins than from `file://`):
@@ -135,6 +147,34 @@ Notes:
 * `index.html` is the very first prototype from the project's first iteration — kept for history.
 * Tested on current desktop Chrome, Edge and Firefox. Mobile is on the roadmap (input scheme
   needs work — help wanted!).
+
+---
+
+## System requirements
+
+The game runs in your **browser — nothing to install**. These are the minimums; integrated
+graphics are fine (a dedicated GPU just buys you higher frame rates).
+
+| | Windows | macOS | Linux |
+| --- | --- | --- | --- |
+| **OS** | Windows 10 (64-bit) or newer | macOS 10.15 “Catalina” or newer | any current 64-bit desktop distro |
+| **Browser** | Chrome / Edge 90+, Firefox 90+ | Safari 15+, Chrome / Firefox 90+ | Chrome / Chromium / Firefox 90+ |
+| **CPU** | dual-core from ~2015 (Intel i3-4000 / AMD Ryzen 3 1200 class or better) | any Mac from ~2015 (Apple Silicon recommended) | dual-core x64 from ~2015 |
+| **RAM** | 4 GB minimum · 8 GB recommended | 4 GB minimum · 8 GB recommended | 4 GB minimum · 8 GB recommended |
+| **GPU** | WebGL-capable integrated graphics (Intel HD 4000+); dedicated GPU recommended | integrated (Apple Silicon recommended) | WebGL-capable (Intel / AMD / NVIDIA; Mesa or proprietary drivers) |
+| **Storage** | ~20 MB for the game file | ~20 MB | ~20 MB |
+| **Internet** | needed only for the first load (three.js CDN); the browser cache covers later sessions | same | same |
+| **Optional** | Node.js 18+ (best `play.bat` experience / building from source); Python 3 as a fallback server | Node.js 18+ or Python 3 for `play.sh` / building | Node.js 18+ or Python 3 for `play.sh` / building |
+
+Notes:
+
+* **Performance reference:** a mid-range desktop holds ~55 fps in the densest downtown view (see
+  [Tech notes](#tech-notes--performance)); low-end laptops run the game fine at lower frame rates.
+  Software WebGL (no GPU driver) still works but is slow.
+* **Mobile phones and tablets are not supported yet** — the touch input scheme is on the
+  [help-wanted list](#help-wanted--contributors--coordination).
+* **Building from source (optional, for contributors):** any 64-bit machine of the above with
+  Node.js ≥ 18 and ~150 MB free disk — see [Building from source](#building-from-source).
 
 ---
 
@@ -208,6 +248,7 @@ To wipe a save: DevTools → Application → Local Storage → delete `sa_index1
 ```
 .
 ├── index1.html                  ← the game (built, self-contained). Play this.
+├── play.bat · play.sh           ← one-click launchers (Windows · macOS/Linux)
 ├── index.html                   ← first-iteration prototype (kept for history)
 ├── README.md · CREDITS.md · CONTRIBUTING.md · CODE_OF_CONDUCT.md · LICENSE
 ├── package.json                 ← convenience npm scripts (no dependencies)

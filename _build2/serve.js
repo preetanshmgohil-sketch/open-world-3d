@@ -24,7 +24,7 @@ const types = {
   '.bin': 'application/octet-stream', '.txt': 'text/plain; charset=utf-8',
 };
 
-http.createServer((req, res) => {
+const server = http.createServer((req, res) => {
   const url = decodeURIComponent((req.url || '/').split('?')[0]);
   let file = path.normalize(path.join(root, url));
   if (!file.startsWith(root)) { res.writeHead(403); res.end('forbidden'); return; }
@@ -37,7 +37,19 @@ http.createServer((req, res) => {
     });
     res.end(buf);
   });
-}).listen(port, () => {
+});
+
+server.on('error', e => {
+  if (e.code === 'EADDRINUSE') {
+    console.error('[serve] port ' + port + ' is already in use - the game may already be running.');
+    console.error('        open http://127.0.0.1:' + port + '/index1.html in your browser.');
+  } else {
+    console.error('[serve] ' + e.message);
+  }
+  process.exit(1);
+});
+
+server.listen(port, () => {
   console.log('serving ' + root);
   console.log('  ->  http://127.0.0.1:' + port + '/index1.html');
 });

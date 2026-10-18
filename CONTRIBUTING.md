@@ -52,6 +52,9 @@ cd open-world-3d
 node _build2/build.js     # build index1.html from base.html + parts   (or: npm run build)
 node _build2/serve.js     # serve this folder on http://127.0.0.1:8123
 # open http://127.0.0.1:8123/index1.html
+
+# one-click alternative (same thing, friendlier):
+#   Windows: double-click play.bat    ·    macOS / Linux: ./play.sh
 ```
 
 Windows equivalents:
