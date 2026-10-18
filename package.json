@@ -1,0 +1,27 @@
+{
+  "name": "open-world-3d",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Open World 3D — Enhanced Edition: a GTA-style open-world sandbox in a single HTML file, built with three.js r128. All bundled 3D models and textures are CC0 or CC-BY (Quaternius, Poly Haven, Kenney, poly.pizza) — see CREDITS.md.",
+  "license": "MIT",
+  "author": "Preetansh Gohil and contributors",
+  "homepage": "https://github.com/preetanshmgohil-sketch/open-world-3d#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/preetanshmgohil-sketch/open-world-3d.git"
+  },
+  "bugs": {
+    "url": "https://github.com/preetanshmgohil-sketch/open-world-3d/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node _build2/build.js",
+    "build:ps": "powershell -NoProfile -ExecutionPolicy Bypass -File _build2/build.ps1",
+    "models": "node _build2/gen_models.js",
+    "textures": "node _build2/gen_texdata.js",
+    "serve": "node _build2/serve.js",
+    "inspect": "node _build2/glb_info.js"
+  }
+}

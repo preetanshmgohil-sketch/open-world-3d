@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>model viewer</title>
+<style>body{margin:0;background:#1a1d22;color:#cfd6df;font:11px Consolas,monospace}#info{position:fixed;top:6px;left:6px;white-space:pre;z-index:5;text-shadow:0 1px 2px #000;pointer-events:none}canvas{display:block}</style>
+</head>
+<body>
+<div id="info">loading…</div>
+<script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/utils/SkeletonUtils.js"></script>
+<script>
+const q = new URLSearchParams(location.search);
+const list = (q.get('m') || 'qdrive/cars_glb/Taxi.glb').split(',').map(s => s.trim()).filter(Boolean);
+const perRow = +(q.get('cols') || 6);
+const step = +(q.get('step') || 1.5);
+const spin = q.get('spin') === '1';
+const info = document.getElementById('info');
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x30363e);
+
+const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, .01, 600);
+
+const hemi = new THREE.HemisphereLight(0xdfe8ff, 0x40382e, .85); scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff2dd, 1.15); sun.position.set(6, 10, 7); sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048); sun.shadow.camera.left = -20; sun.shadow.camera.right = 20; sun.shadow.camera.top = 20; sun.shadow.camera.bottom = -20;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xbfd0ff, .35); fill.position.set(-7, 6, -6); scene.add(fill);
+
+const gnd = new THREE.Mesh(new THREE.CircleGeometry(80, 40).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0x54595f, roughness: .95 }));
+gnd.receiveShadow = true; scene.add(gnd);
+
+/* simple environment so PBR looks right */
+const pmrem = new THREE.PMREMGenerator(renderer);
+{
+  const env = new THREE.Scene();
+  env.background = new THREE.Color(0x5a6270);
+  const box = new THREE.Mesh(new THREE.BoxGeometry(30, 16, 30), new THREE.MeshBasicMaterial({ color: 0x848c9a, side: THREE.BackSide }));
+  env.add(box);
+  const lite = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+  lite.position.set(0, 7.9, 0); lite.rotation.x = Math.PI / 2; env.add(lite);
+  scene.environment = pmrem.fromScene(env, .04).texture;
+}
+
+const lines = [];
+const rows = Math.ceil(list.length / perRow);
+let loaded = 0, failed = 0;
+const group = new THREE.Group(); scene.add(group);
+
+function place(o, i) {
+  const col = i % perRow, row = (i / perRow) | 0;
+  o.position.set((col - (Math.min(list.length - row * perRow, perRow) - 1) / 2) * step, 0, (row - (rows - 1) / 2) * step * .95);
+}
+
+const loader = new THREE.GLTFLoader();
+const poseFns = [];
+function setupPose(o) {
+  o.updateMatrixWorld(true);
+  const rootQ = o.getWorldQuaternion(new THREE.Quaternion());
+  const bones = {};
+  o.traverse(n => { if (n.isBone) bones[n.name.replace(/\./g, '')] = n; });
+  const axisCache = {};
+  const axIn = (bone, charAxis) => {
+    const key = bone.name + charAxis;
+    if (axisCache[key]) return axisCache[key];
+    const qq = bone.parent.getWorldQuaternion(new THREE.Quaternion()).invert().multiply(rootQ);
+    const v = charAxis === 'x' ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 0, 1);
+    return axisCache[key] = v.applyQuaternion(qq).normalize();
+  };
+  for (const k in bones) bones[k].userData.q0 = bones[k].quaternion.clone();
+  const P = q.get('phase') !== null ? +(q.get('phase') || 0) : null;
+  const setB = (name, axis, ang) => {
+    const b = bones[name]; if (!b) return;
+    const qd = new THREE.Quaternion().setFromAxisAngle(axIn(b, axis), ang);
+    b.quaternion.premultiply(qd);
+  };
+  const applyPose = (ph) => {
+    for (const k in bones) bones[k].quaternion.copy(bones[k].userData.q0);
+    setB('UpperArmL', 'z', -1.25);
+    setB('UpperArmR', 'z', 1.25);
+    setB('LowerArmL', 'z', -0.12);
+    setB('LowerArmR', 'z', 0.12);
+    if (ph !== null && ph !== undefined) {
+      const s = Math.sin(ph), c = Math.sin(ph + Math.PI);
+      setB('UpperLegL', 'x', s * .55);
+      setB('UpperLegR', 'x', c * .55);
+      setB('LowerLegL', 'x', Math.max(0, -s) * .9);
+      setB('LowerLegR', 'x', Math.max(0, -c) * .9);
+      setB('UpperArmL', 'x', c * .4);
+      setB('UpperArmR', 'x', s * .4);
+    }
+  };
+  applyPose(P);
+  poseFns.push(applyPose);
+  lines.push('  [posed ' + Object.keys(bones).length + ' bones]');
+}
+list.forEach((m, i) => {
+  loader.load(m, (g) => {
+    const o = g.scene;
+    o.traverse(n => { if (n.isMesh) { n.castShadow = true; } });
+    place(o, i);
+    group.add(o);
+
+    const bb = new THREE.Box3().setFromObject(o);
+    const size = bb.getSize(new THREE.Vector3());
+    lines.push(m.split('/').pop() + '  ' + size.x.toFixed(2) + 'x' + size.y.toFixed(2) + 'x' + size.z.toFixed(2) + (g.animations.length ? ' anims:' + g.animations.length : ''));
+    if (q.get('norm')) {          /* normalize max horizontal dim, rest on ground */
+      const target = parseFloat(q.get('norm'));
+      const s = target / Math.max(size.x, size.z, .001);
+      o.scale.multiplyScalar(s);
+      o.updateMatrixWorld(true);
+      const bb2 = new THREE.Box3().setFromObject(o);
+      o.position.y = -bb2.min.y;
+    }
+    if (q.get('detail') === '1') {
+      const nm = [];
+      o.traverse(n => { if ((n.isBone || n.isMesh || n.isSkinnedMesh) && nm.length < 70) nm.push((n.isBone ? 'B ' : n.isSkinnedMesh ? 'S ' : 'M ') + n.name) });
+      lines.push('  ' + nm.join(' | '));
+    }
+    if (q.get('pose') === '1') setupPose(o);
+    loaded++; if (loaded + failed === list.length) done();
+  }, undefined, (e) => { failed++; lines.push('ERR ' + m + ' ' + e); if (loaded + failed === list.length) done(); });
+});
+
+let t0 = performance.now();
+(function loop() {
+  requestAnimationFrame(loop);
+  const t = performance.now();
+  if (spin) group.rotation.y = (t - t0) * .0006;
+  renderer.render(scene, camera);
+})();
+
+function done() {
+  info.textContent = lines.join('\n');
+  if (q.get('pose') === '1' && !window.__pose) window.__pose = (ph) => poseFns.forEach(f => f(ph));
+  window.__modelInfo = lines.join('\n');
+  /* frame camera on everything */
+  const bb = new THREE.Box3().setFromObject(group);
+  const size = bb.getSize(new THREE.Vector3()), c = bb.getCenter(new THREE.Vector3());
+  const w = Math.max(size.x, size.z), d = Math.max(size.x, size.z);
+  const dist = Math.max(d * 1.05 / Math.tan(Math.PI / 8), size.y * 2.2) + 2;
+  camera.position.set(c.x + dist * .1, c.y + dist * .38, c.z + dist * .92);
+  camera.lookAt(c.x, c.y * .8, c.z);
+  renderer.render(scene, camera);
+  window.__ready = true;
+}
+
+/* synchronous shoot: call from browser evaluate */
+const shotCanvas = document.createElement('canvas');
+window.__shoot = function (name, view) {
+  if (view) { camera.position.set(view[0], view[1], view[2]); camera.lookAt(view[3] || 0, view[4] || 0, view[5] || 0); }
+  renderer.render(scene, camera);
+  shotCanvas.width = renderer.domElement.width;
+  shotCanvas.height = renderer.domElement.height;
+  shotCanvas.getContext('2d').drawImage(renderer.domElement, 0, 0);
+  const data = shotCanvas.toDataURL('image/jpeg', .82);
+  if (!name) return data.length;
+  return fetch('http://127.0.0.1:8124/shot?name=' + encodeURIComponent(name), { method: 'POST', body: data })
+    .then(r => r.text()).catch(e => 'ERR ' + e);
+};
+window.__cam = function (p, look) { camera.position.set(p[0], p[1], p[2]); camera.lookAt(look[0], look[1], look[2]); renderer.render(scene, camera); return 'ok'; };
+</script>
+</body>
+</html>

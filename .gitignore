@@ -1,0 +1,29 @@
+# ── Local scratch (backups, raw QA shots, candidate models) ──
+_local/
+
+# Raw QA screenshots (curated copies live in docs/screenshots/)
+_build2/shots/
+
+# Generated payload parts — recreated by gen_models.js / gen_texdata.js
+_build2/parts/s20_texdata.js
+_build2/parts/s23_gltf.js
+_build2/parts/s24_skel.js
+_build2/parts/s25_mdl_data.js
+
+# Build tool (FBX2glTF.exe) — download separately, see CONTRIBUTING.md
+_build2/tools/
+
+# Node
+node_modules/
+
+# Archives
+*.zip
+
+# OS / editor cruft
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+
+# Old full-file backups
+index1.*.backup.html

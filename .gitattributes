@@ -1,0 +1,9 @@
+# Keep file bytes exactly as checked in — the single-file build is byte-sensitive.
+* -text
+
+# Explicitly binary
+*.png binary
+*.jpg binary
+*.glb binary
+*.fbx binary
+*.exe binary

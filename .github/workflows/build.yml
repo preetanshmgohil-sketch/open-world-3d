@@ -1,0 +1,36 @@
+name: Build check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Regenerate asset payloads
+        run: |
+          node _build2/gen_models.js
+          node _build2/gen_texdata.js
+
+      - name: Build index1.html
+        run: node _build2/build.js
+
+      - name: Verify the build output
+        run: |
+          node -e "
+            const fs = require('fs');
+            const s = fs.readFileSync('index1.html', 'utf8');
+            if (s.length < 10e6) throw new Error('index1.html looks truncated (' + s.length + ' chars)');
+            if (s.includes('@@PARTS@@')) throw new Error('marker was not replaced - build failed');
+            if (!s.includes('window.SA_MDL')) throw new Error('3D model payload missing from build');
+            if (!s.includes('window.SA_TEX')) throw new Error('texture payload missing from build');
+            console.log('index1.html OK:', (s.length / 1048576).toFixed(1) + ' MB');
+          "

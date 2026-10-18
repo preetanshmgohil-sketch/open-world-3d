@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open World 3D — Enhanced Edition</title>
+<meta name="description" content="A GTA-style open-world sandbox that runs in a single HTML file. Free & open source — all bundled 3D models and textures are CC0/CC-BY.">
+<style>
+  :root{
+    --bg:#0b0e13; --panel:#121722; --line:#1f2735; --txt:#e8edf5; --dim:#9aa7bd;
+    --accent:#ff8a3d; --accent2:#4dc3ff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1100px 500px at 75% -10%, rgba(77,195,255,.12), transparent 60%),
+      radial-gradient(900px 500px at 15% 110%, rgba(255,138,61,.10), transparent 60%),
+      var(--bg);
+    color:var(--txt);
+    font:16px/1.55 "Segoe UI", system-ui, Arial, sans-serif;
+    min-height:100vh;
+  }
+  .wrap{max-width:1060px;margin:0 auto;padding:64px 20px 40px}
+  header{text-align:center}
+  h1{
+    margin:0;
+    font-size:clamp(34px, 6vw, 62px);
+    letter-spacing:.06em;
+    line-height:1.05;
+    font-weight:800;
+    text-shadow:0 0 34px rgba(77,195,255,.25);
+  }
+  h1 .thin{color:var(--dim);font-weight:300}
+  .sub{color:var(--dim);margin:14px auto 0;max-width:640px;font-size:clamp(14px,2vw,18px)}
+  .badges{margin-top:18px;color:var(--dim);font-size:13px;letter-spacing:.04em}
+  .badges b{color:var(--accent)}
+  .btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:34px 0 10px}
+  .btn{
+    display:inline-block;padding:14px 26px;border-radius:10px;text-decoration:none;
+    color:var(--txt);background:var(--panel);border:1px solid var(--line);
+    font-weight:600;letter-spacing:.02em;transition:transform .12s ease, border-color .12s ease, background .12s ease;
+  }
+  .btn:hover{transform:translateY(-2px);border-color:#33405a;background:#161d2b}
+  .btn.play{
+    background:linear-gradient(180deg,#ff9a52,#ff7a22);color:#20130a;border-color:#ffb37e;
+    box-shadow:0 10px 30px rgba(255,138,61,.25);
+  }
+  .btn.play:hover{background:linear-gradient(180deg,#ffab6c,#ff8a3d)}
+  .hint{color:var(--dim);font-size:13px;margin-top:14px}
+  .hint kbd{
+    background:#1a2130;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;
+    padding:1px 6px;font:12px/1.4 Consolas,monospace;color:#cdd7e6;
+  }
+  .shots{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:46px 0 0;
+  }
+  .shots a{display:block;border-radius:10px;overflow:hidden;border:1px solid var(--line);line-height:0}
+  .shots img{width:100%;height:100%;object-fit:cover;aspect-ratio:16/9;display:block;transition:transform .25s ease}
+  .shots a:hover img{transform:scale(1.04)}
+  @media (max-width:760px){ .shots{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:480px){ .shots{grid-template-columns:1fr} }
+  .features{
+    display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:40px 0 0;
+  }
+  .chip{
+    background:var(--panel);border:1px solid var(--line);border-radius:999px;
+    padding:7px 15px;font-size:13.5px;color:#c8d3e4;
+  }
+  .chip b{color:var(--accent2);font-weight:600}
+  footer{
+    margin-top:64px;padding-top:22px;border-top:1px solid var(--line);
+    color:var(--dim);font-size:13px;text-align:center;
+  }
+  footer a{color:#9fd7ff;text-decoration:none}
+  footer a:hover{text-decoration:underline}
+  .legal{margin-top:10px;font-size:12px;color:#6c7890}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>OPEN WORLD 3D</h1>
+    <div class="sub">A <b>GTA-style open-world sandbox</b> that runs in a single HTML file.
+      Island city, real 3D models, traffic &amp; pedestrians, gangs, police chases, missions,
+      radio, day/night — 100% free &amp; open source.</div>
+    <div class="badges">60 VEHICLES · 12 CHARACTER MODELS · 6 RADIO STATIONS · SAVE SYSTEM · MIT CODE</div>
+    <div class="btns">
+      <a class="btn play" href="play.html">▶&nbsp; Play now (16 MB)</a>
+      <a class="btn" href="https://github.com/preetanshmohil-sketch/open-world-3d">⭐ GitHub repo</a>
+      <a class="btn" href="prototype.html">🕹 First prototype</a>
+    </div>
+    <div class="hint"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move &nbsp;·&nbsp;
+      mouse look (click the page to capture the mouse) &nbsp;·&nbsp; <kbd>F</kbd> enter vehicle &nbsp;·&nbsp;
+      <kbd>P</kbd> pause / save</div>
+  </header>
+
+  <section class="shots" aria-label="Screenshots">
+    <a href="play.html"><img src="screenshots/street.jpg" alt="Downtown street with traffic"></a>
+    <a href="play.html"><img src="screenshots/night-street.jpg" alt="Downtown at night"></a>
+    <a href="play.html"><img src="screenshots/motorcycle.jpg" alt="Riding the Suzuki SV650"></a>
+    <a href="play.html"><img src="screenshots/helicopter.jpg" alt="Helicopter over the coast"></a>
+    <a href="play.html"><img src="screenshots/night-las-venturas.jpg" alt="The Pyramid casino at dusk"></a>
+    <a href="play.html"><img src="screenshots/aerial.jpg" alt="Aerial view of the island"></a>
+  </section>
+
+  <section class="features" aria-label="Features">
+    <span class="chip"><b>Single file</b> — download &amp; open, no setup</span>
+    <span class="chip"><b>Real 3D models</b> — cars, bikes, boats, planes, helicopters, characters</span>
+    <span class="chip"><b>Living city</b> — traffic AI, pedestrians, six-star police chases</span>
+    <span class="chip"><b>Gangs &amp; turf</b> — capture zones, respect, RPG stats</span>
+    <span class="chip"><b>Day / night + weather</b></span>
+    <span class="chip"><b>Radio</b> — 6 stations, all audio synthesized</span>
+    <span class="chip"><b>Save system</b> — manual + autosave</span>
+    <span class="chip"><b>CC0 / CC-BY assets</b> — fully legal to reuse</span>
+  </section>
+
+  <footer>
+    Built with <a href="https://threejs.org">three.js</a> ·
+    models &amp; textures: <a href="https://quaternius.com">Quaternius</a>,
+    <a href="https://polyhaven.com">Poly Haven</a>, <a href="https://kenney.nl">Kenney</a>,
+    <a href="https://poly.pizza">poly.pizza</a> (CC0 / CC-BY) ·
+    <a href="https://github.com/preetanshmohil-sketch/open-world-3d/blob/main/CREDITS.md">full credits</a>
+    <div class="legal">Independent fan project — not affiliated with Rockstar Games or Take-Two Interactive.
+      Contains no assets from any commercial game. Code licensed MIT.</div>
+  </footer>
+
+</div>
+</body>
+</html>

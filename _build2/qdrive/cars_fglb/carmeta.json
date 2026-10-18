@@ -1,0 +1,44 @@
+{
+ "Cop": {
+  "len": 3.73,
+  "wid": 1.778,
+  "hgt": 1.035,
+  "groundLocalZ": 0.09
+ },
+ "NormalCar1": {
+  "len": 4.221,
+  "wid": 1.807,
+  "hgt": 1.012,
+  "groundLocalZ": 0.171
+ },
+ "NormalCar2": {
+  "len": 3.272,
+  "wid": 1.638,
+  "hgt": 0.972,
+  "groundLocalZ": 0.146
+ },
+ "SportsCar": {
+  "len": 3.927,
+  "wid": 1.805,
+  "hgt": 0.97,
+  "groundLocalZ": 0.175
+ },
+ "SportsCar2": {
+  "len": 3.927,
+  "wid": 1.72,
+  "hgt": 1.035,
+  "groundLocalZ": 0.152
+ },
+ "SUV": {
+  "len": 4.161,
+  "wid": 2.111,
+  "hgt": 1.248,
+  "groundLocalZ": 0.24
+ },
+ "Taxi": {
+  "len": 4.221,
+  "wid": 1.807,
+  "hgt": 1.146,
+  "groundLocalZ": 0.154
+ }
+}
